@@ -6,6 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(dependencies/glad)
 add_subdirectory(dependencies/glfw)
 
-add_executable(minecraft src/main.cpp)
+add_executable(minecraft src/main.cpp src/Renderer/Shader.cpp src/Renderer/Shader.h)
 
 target_link_libraries(minecraft PUBLIC glfw glad)
