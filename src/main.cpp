@@ -13,12 +13,25 @@
 
 int width = 1200;
 int height = 1200;
+bool paused = false;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
 void processInput(GLFWwindow *window, Player &player) {
+
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        paused = !paused;
+        if (paused) {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        } else {
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+        }
+    }
+
+    if (paused)return;
+
     double centerX = (double) width / 2;
     double centerY = (double) height / 2;
     double mouse_x, mouse_y;
@@ -31,10 +44,6 @@ void processInput(GLFWwindow *window, Player &player) {
     player.yaw += xOffset;
     player.pitch = std::max(std::min(player.pitch - yOffset, 90.f), -90.0f);
 
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, true);
-    }
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
         player.position.z += 0.1;
     }
