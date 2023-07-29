@@ -25,11 +25,12 @@ void processInput(GLFWwindow *window, Player &player) {
     glfwGetCursorPos(window, &mouse_x, &mouse_y);
     glfwSetCursorPos(window, centerX, centerY);
 
-    float delta_x = mouse_x - centerX;
-    float delta_y = mouse_y - centerY;
+    float xOffset = mouse_x - centerX;
+    float yOffset = mouse_y - centerY;
 
-    player.eulers.z += delta_x;
-    player.eulers.y = std::max(std::min(player.eulers.y + delta_y, 180.0f), 0.0f);
+    player.yaw += xOffset;
+    player.pitch = std::max(std::min(player.pitch - yOffset, 90.f), -90.0f);
+
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -47,10 +48,10 @@ void processInput(GLFWwindow *window, Player &player) {
         player.position.x -= 0.1;
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-        player.position.y -= 0.1;
+        player.position.y += 0.1;
     }
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-        player.position.y += 0.1;
+        player.position.y -= 0.1;
     }
 }
 
@@ -130,16 +131,23 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         double startTime = glfwGetTime();
         processInput(window, player);
-        std::cout << glm::to_string(player.position) << " - " << glm::to_string(player.eulers) << std::endl;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaderProgram.Activate();
 
+        glm::vec3 WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3 front;
+        front.x = cos(glm::radians(player.yaw)) * cos(glm::radians(player.pitch));
+        front.y = sin(glm::radians(player.pitch));
+        front.z = sin(glm::radians(player.yaw)) * cos(glm::radians(player.pitch));
+        front = glm::normalize(front);
+        glm::vec3 Right = glm::normalize(glm::cross(front,WorldUp));
+        glm::vec3 Up = glm::normalize(glm::cross(Right, front));
+
         glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view = glm::mat4(1.0f);
+        glm::mat4 view = glm::lookAt(player.position, player.position + front, Up);
         glm::mat4 proj = glm::mat4(1.0f);
-        view = glm::translate(view, player.position);
         proj = glm::perspective(glm::radians(45.0f), (float) (width / height), 0.1f, 100.0f);
 
         int modelLog = glGetUniformLocation(shaderProgram.ID, "model");
