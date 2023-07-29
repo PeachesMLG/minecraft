@@ -10,7 +10,7 @@ public:
 
     VAO();
 
-    void LinkVBO(VBO &vbo, GLuint layout);
+    void LinkVBO(VBO &vbo);
 
     void Bind();
 

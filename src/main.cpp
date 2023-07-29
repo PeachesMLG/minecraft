@@ -4,6 +4,7 @@
 #include "Renderer/Shader.h"
 #include "Renderer/VAO.h"
 #include "Renderer/EBO.h"
+#include "Renderer/Vertex.h"
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -21,11 +22,11 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLfloat verticies[] = {
-            -0.5f, -0.5f, 0.0f, // Lower left corner
-            0.5f, -0.5f, 0.0f, // Lower right corner
-            -0.5f, 0.5f, 0.0f, // Upper left corner
-            0.5f, 0.5f, 0.0f // Upper right corner
+    Vertex verticies[] = {
+            -0.5f, -0.5f, 0.0f, 0.97f, 0.97f, 0.43f, // Lower left corner
+            0.5f, -0.5f, 0.0f, 0.57f, 0.86f, 0.49, // Lower right corner
+            -0.5f, 0.5f, 0.0f, 0.57f, 0.86f, 0.49f, // Upper left corner
+            0.5f, 0.5f, 0.0f, 0.22f, 0.7f, 0.55f, // Upper right corner
     };
 
     GLuint indicies[] = {
@@ -57,7 +58,7 @@ int main() {
 
     VBO vbo(verticies, sizeof(verticies));
     EBO ebo(indicies, sizeof(indicies));
-    vao.LinkVBO(vbo, 0);
+    vao.LinkVBO(vbo);
     vao.Unbind();
     vbo.Unbind();
     ebo.Unbind();

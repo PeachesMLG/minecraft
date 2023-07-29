@@ -12,6 +12,7 @@ add_executable(minecraft src/main.cpp src/Renderer/Shader.cpp src/Renderer/Shade
         src/Renderer/EBO.cpp
         src/Renderer/EBO.h
         src/Renderer/VAO.cpp
-        src/Renderer/VAO.h)
+        src/Renderer/VAO.h
+        src/Renderer/Vertex.h)
 
 target_link_libraries(minecraft PUBLIC glfw glad)

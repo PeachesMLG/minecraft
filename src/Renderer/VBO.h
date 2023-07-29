@@ -2,12 +2,13 @@
 #define MINECRAFT_VBO_H
 
 #include<glad/glad.h>
+#include "Vertex.h"
 
 class VBO {
 public:
     GLuint ID;
 
-    VBO(GLfloat *vertices, GLsizeiptr size);
+    VBO(Vertex *vertices, GLsizeiptr size);
 
     void Bind();
 
