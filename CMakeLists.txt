@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory(dependencies/glad)
 add_subdirectory(dependencies/glfw)
+add_subdirectory(dependencies/glm)
 
 add_executable(minecraft src/main.cpp src/Renderer/Shader.cpp src/Renderer/Shader.h
         src/Renderer/VBO.cpp
@@ -15,4 +16,4 @@ add_executable(minecraft src/main.cpp src/Renderer/Shader.cpp src/Renderer/Shade
         src/Renderer/VAO.h
         src/Renderer/Vertex.h)
 
-target_link_libraries(minecraft PUBLIC glfw glad)
+target_link_libraries(minecraft PUBLIC glfw glad glm)
