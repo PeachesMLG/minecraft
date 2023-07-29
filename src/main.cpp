@@ -139,9 +139,18 @@ int main() {
 
         camera.applyView(player, shaderProgram.ID, (float) (width / height));
 
-        ebo.Bind();
-        vao.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(int), GL_UNSIGNED_INT, 0);
+        for (int x = 0; x < 16; ++x) {
+            for (int z = 0; z < 16; ++z) {
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, glm::vec3(x, 0.0f, z));
+                int modelLog = glGetUniformLocation(shaderProgram.ID, "model");
+                glUniformMatrix4fv(modelLog, 1, GL_FALSE, glm::value_ptr(model));
+
+                ebo.Bind();
+                vao.Bind();
+                glDrawElements(GL_TRIANGLES, sizeof(indicies) / sizeof(int), GL_UNSIGNED_INT, 0);
+            }
+        }
 
         glfwSwapBuffers(window);
         glfwPollEvents();

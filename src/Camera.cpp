@@ -1,13 +1,10 @@
 #include "Camera.h"
 
 void Camera::applyView(Player player, GLuint shaderId, float aspect) {
-    glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = getView(player);
     glm::mat4 proj = glm::mat4(1.0f);
     proj = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
 
-    int modelLog = glGetUniformLocation(shaderId, "model");
-    glUniformMatrix4fv(modelLog, 1, GL_FALSE, glm::value_ptr(model));
     int viewLog = glGetUniformLocation(shaderId, "view");
     glUniformMatrix4fv(viewLog, 1, GL_FALSE, glm::value_ptr(view));
     int projLog = glGetUniformLocation(shaderId, "proj");
