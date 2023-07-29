@@ -2,19 +2,55 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
+#include <algorithm>
 #include <iostream>
 #include "Renderer/Shader.h"
 #include "Renderer/VAO.h"
 #include "Renderer/EBO.h"
 #include "Renderer/Vertex.h"
+#include "Player.h"
+
+int width = 1200;
+int height = 1200;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
-void processInput(GLFWwindow *window) {
+void processInput(GLFWwindow *window, Player &player) {
+    double centerX = (double) width / 2;
+    double centerY = (double) height / 2;
+    double mouse_x, mouse_y;
+    glfwGetCursorPos(window, &mouse_x, &mouse_y);
+    glfwSetCursorPos(window, centerX, centerY);
+
+    float delta_x = mouse_x - centerX;
+    float delta_y = mouse_y - centerY;
+
+    player.eulers.z += delta_x;
+    player.eulers.y = std::max(std::min(player.eulers.y + delta_y, 180.0f), 0.0f);
+
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
+    }
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        player.position.z += 0.1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        player.position.x += 0.1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        player.position.z -= 0.1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        player.position.x -= 0.1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+        player.position.y -= 0.1;
+    }
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+        player.position.y += 0.1;
     }
 }
 
@@ -56,9 +92,6 @@ int main() {
             6, 2, 3
     };
 
-    int width = 1200;
-    int height = 1200;
-
     GLFWwindow *window = glfwCreateWindow(width, height, "Minecraft", nullptr, nullptr);
     if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -90,28 +123,23 @@ int main() {
 
     glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
     glEnable(GL_DEPTH_TEST);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-    float rotation = 0.0f;
-    double prevTime = glfwGetTime();
+    Player player;
+
     while (!glfwWindowShouldClose(window)) {
         double startTime = glfwGetTime();
-        processInput(window);
+        processInput(window, player);
+        std::cout << glm::to_string(player.position) << " - " << glm::to_string(player.eulers) << std::endl;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaderProgram.Activate();
 
-        double crntTime = glfwGetTime();
-        if (crntTime - prevTime >= 1.0f / 60.0f) {
-            rotation += 0.5f;
-            prevTime = crntTime;
-        }
-
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 proj = glm::mat4(1.0f);
-        model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
+        view = glm::translate(view, player.position);
         proj = glm::perspective(glm::radians(45.0f), (float) (width / height), 0.1f, 100.0f);
 
         int modelLog = glGetUniformLocation(shaderProgram.ID, "model");
