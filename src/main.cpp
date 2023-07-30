@@ -47,6 +47,8 @@ void processInput(GLFWwindow *window, Player &player) {
 
     if (paused)return;
 
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) cameraSpeed *=2;
+
     double mouse_x, mouse_y;
     glfwGetCursorPos(window, &mouse_x, &mouse_y);
     glfwSetCursorPos(window, centerX, centerY);
