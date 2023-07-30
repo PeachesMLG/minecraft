@@ -7,10 +7,11 @@
 
 class Camera {
 public:
-    void applyView(Player player, GLuint shaderId, float aspect);
+    static void applyView(Player player, GLuint shaderId, float aspect);
+    static glm::vec3 getFront(Player player);
 
 private:
-    glm::mat4 getView(Player player);
+    static glm::mat4 getView(Player player);
 };
 
 

@@ -20,6 +20,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 }
 
 void processInput(GLFWwindow *window, Player &player) {
+    float cameraSpeed = 0.25f;
+    float sensitivity = 0.1f;
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         paused = !paused;
@@ -41,20 +43,25 @@ void processInput(GLFWwindow *window, Player &player) {
     float xOffset = mouse_x - centerX;
     float yOffset = mouse_y - centerY;
 
-    player.yaw += xOffset;
-    player.pitch = std::max(std::min(player.pitch - yOffset, 90.f), -90.0f);
+    player.yaw += xOffset * sensitivity;
+    player.pitch = std::max(std::min(player.pitch - (yOffset * sensitivity), 89.9f), -89.9f);
+
+    glm::vec3 front = Camera::getFront(player);
+    front.y = 0;
+    front = glm::normalize(front);
+    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        player.position.z += 0.1;
+        player.position += cameraSpeed * front;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        player.position.x += 0.1;
+        player.position -= glm::normalize(glm::cross(front, cameraUp)) * cameraSpeed;
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        player.position.z -= 0.1;
+        player.position -= cameraSpeed * front;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        player.position.x -= 0.1;
+        player.position += glm::normalize(glm::cross(front, cameraUp)) * cameraSpeed;
     }
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
         player.position.y += 0.1;
@@ -119,7 +126,6 @@ int main() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    Camera camera;
     Shader shaderProgram("shaders/default.vert", "shaders/default.frag");
 
     VAO vao;
@@ -146,7 +152,7 @@ int main() {
 
         shaderProgram.Activate();
 
-        camera.applyView(player, shaderProgram.ID, (float) (width / height));
+        Camera::applyView(player, shaderProgram.ID, (float) (width / height));
 
         for (int x = 0; x < 16; ++x) {
             for (int z = 0; z < 16; ++z) {
