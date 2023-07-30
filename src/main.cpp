@@ -15,6 +15,7 @@ int width = 1200;
 int height = 1200;
 bool paused = false;
 bool firstInput = true;
+bool hasTriggeredPause = false;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -32,13 +33,16 @@ void processInput(GLFWwindow *window, Player &player) {
         return;
     }
 
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS && !hasTriggeredPause) {
+        hasTriggeredPause = true;
         paused = !paused;
         if (paused) {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         } else {
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
         }
+    } else if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE) {
+        hasTriggeredPause = false;
     }
 
     if (paused)return;
