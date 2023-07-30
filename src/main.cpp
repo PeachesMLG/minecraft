@@ -14,14 +14,23 @@
 int width = 1200;
 int height = 1200;
 bool paused = false;
+bool firstInput = true;
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
     glViewport(0, 0, width, height);
 }
 
 void processInput(GLFWwindow *window, Player &player) {
+    double centerX = (double) width / 2;
+    double centerY = (double) height / 2;
     float cameraSpeed = 0.25f;
     float sensitivity = 0.1f;
+
+    if (firstInput) {
+        glfwSetCursorPos(window, centerX, centerY);
+        firstInput = false;
+        return;
+    }
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         paused = !paused;
@@ -34,8 +43,6 @@ void processInput(GLFWwindow *window, Player &player) {
 
     if (paused)return;
 
-    double centerX = (double) width / 2;
-    double centerY = (double) height / 2;
     double mouse_x, mouse_y;
     glfwGetCursorPos(window, &mouse_x, &mouse_y);
     glfwSetCursorPos(window, centerX, centerY);
@@ -149,6 +156,8 @@ int main() {
         processInput(window, player);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        std::cout << glm::to_string(player.position) << "(" << player.yaw << "/" << player.pitch << ")" << std::endl;
 
         shaderProgram.Activate();
 

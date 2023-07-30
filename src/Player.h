@@ -6,8 +6,8 @@
 
 class Player {
 public:
-    glm::vec3 position = {0.0f, 0.0f,-2.0f};
-    float yaw = 0;
+    glm::vec3 position = {0.0f, 0.0f, -0.0f};
+    float yaw = 90;
     float pitch = 0;
 };
 
